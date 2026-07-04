@@ -1,21 +1,20 @@
 import { describe, it } from "bun:test";
 import { expect } from "chai";
 
+import { factoryEmail } from "../../factories/Factory-VO/factoryEmail.ts";
 import { Email } from "../../../src/domain/value-objects/Email.ts";
-import { faker } from "@faker-js/faker";
 
 describe("Email", () => {
-  const newEmail = new Email(faker.internet.email());
+  const validEmail = new Email(factoryEmail());
   const emptyEmail = () => new Email("");
-  const emailWithoutAt = () =>
-    new Email(faker.internet.email().replace("@", ""));
+  const emailWithoutAt = () => new Email(factoryEmail().replace("@", ""));
   const invalidEmail = () => new Email("not-an-email");
   const emailIvalidType = () => new Email(123 as any);
 
   describe("Business Rules", () => {
     describe("Positive Scenarios", () => {
       it("should create a valid email", () => {
-        expect(newEmail.getValue()).to.includes("@");
+        expect(validEmail.getValue()).to.includes("@");
       });
     });
 
@@ -35,7 +34,7 @@ describe("Email", () => {
   describe("Validations", () => {
     describe("Positive scenarios", () => {
       it("Email Should be a string", () => {
-        expect(newEmail.getValue()).to.be.an("string");
+        expect(validEmail.getValue()).to.be.an("string");
       });
     });
 
