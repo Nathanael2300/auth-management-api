@@ -5,60 +5,74 @@ import { factoryPassword } from "../../factories/Factory-VO/factoryPassword.ts";
 import { Password } from "../../../src/domain/value-objects/Password.ts";
 
 describe("Password", () => {
-  const validPassword = () => new Password(factoryPassword());
-  const passwordWithoutNumber = () => new Password("Abcdef!@#");
-  const passwordWithoutSpecialCharacter = () => new Password("Abc12345");
-  const passwordTooShort = () => new Password("Ab1!");
-  const passwordTooLong = () => new Password("Abc123!@Def45");
-  const emptyPassword = () => new Password("");
+  const validPassword = (value = factoryPassword()) => new Password(value);
 
   describe("Business Rules", () => {
     describe("Positive scenarios", () => {
       it("Should create a valid password", () => {
-        expect(validPassword().getValue().length).to.eql(12);
-        expect(validPassword().getValue()).to.match(/[A-Z]/);
-        expect(validPassword().getValue()).to.match(/[^A-Za-z0-9]/);
-        expect(validPassword().getValue()).to.match(/[0-9]/);
+        const password = validPassword();
+        const value = password.getValue();
+
+        expect(value).to.have.lengthOf(12);
+        expect(value).to.match(/[A-Z]/);
+        expect(value).to.match(/[0-9]/);
+        expect(value).to.match(/[^A-Za-z0-9]/);
       });
     });
 
     describe("Negative scenarios", () => {
       it("Should return an error when password does not contain a number", () => {
-        expect(passwordWithoutNumber).to.throw(
+        expect(() => validPassword("Abcdef!@#")).to.throw(
           Error,
           "Password must have at least one number",
         );
       });
 
-      it("Should return an error when password does not contain a special character ", () => {
-        expect(passwordWithoutSpecialCharacter).to.throw(
+      it("Should return an error when password does not contain a special character", () => {
+        expect(() => validPassword("Abc12345")).to.throw(
           Error,
           "Password must have at least one special character",
         );
       });
 
       it("Should return an error when password is too short", () => {
-        expect(passwordTooShort).to.throw(
+        expect(() => validPassword("Ab1!")).to.throw(
           Error,
           "Password must have at least 6 characters.",
         );
       });
 
       it("Should return an error when password is too long", () => {
-        expect(passwordTooLong).to.throw(
+        expect(() => validPassword("Abc123!@Def45")).to.throw(
           Error,
           "Password must have at most 12 characters.",
         );
       });
 
       it("Should return an error when password is empty", () => {
-        expect(emptyPassword).to.throw(Error, "Password is required");
+        expect(() => validPassword("")).to.throw(Error, "Password is required");
       });
     });
   });
 
   describe("Validations", () => {
-    describe("Positive scenarios", () => {});
-    describe("Negative scenarios", () => {});
+    describe("Positive scenarios", () => {
+      it("Password should return a string", () => {
+        expect(validPassword().getValue()).to.be.a("string");
+      });
+
+      it("Should create a valid Password Value Object", () => {
+        expect(validPassword()).to.be.instanceOf(Password);
+      });
+    });
+
+    describe("Negative scenarios", () => {
+      it("Should return an error when password type is not string", () => {
+        expect(() => validPassword(123 as any)).to.throw(
+          Error,
+          "Password must be string",
+        );
+      });
+    });
   });
 });
