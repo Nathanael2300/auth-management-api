@@ -5,6 +5,7 @@ import { Email } from "../../../src/domain/value-objects/Email.ts";
 import { Password } from "../../../src/domain/value-objects/Password.ts";
 
 import { UserFactoryDTO } from "../../dtos/user.factory.dto.ts";
+import { Name } from "../../../src/domain/value-objects/Name.ts";
 
 export const newUser = ({
   id = faker.string.uuid(),
@@ -15,7 +16,7 @@ export const newUser = ({
 }: UserFactoryDTO = {}) => {
   return new User(
     id,
-    name,
+    new Name(name),
     new Email(email),
     new Password(password),
     createdAt,

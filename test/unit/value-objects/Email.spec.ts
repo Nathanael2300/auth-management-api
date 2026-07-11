@@ -5,42 +5,55 @@ import { factoryEmail } from "../../factories/Factory-VO/factoryEmail.ts";
 import { Email } from "../../../src/domain/value-objects/Email.ts";
 
 describe("Email", () => {
-  const validEmail = new Email(factoryEmail());
-  const emptyEmail = () => new Email("");
-  const emailWithoutAt = () => new Email(factoryEmail().replace("@", ""));
-  const invalidEmail = () => new Email("not-an-email");
-  const emailIvalidType = () => new Email(123 as any);
+  const validEmail = (value = factoryEmail()) => new Email(value);
 
   describe("Business Rules", () => {
-    describe("Positive Scenarios", () => {
-      it("should create a valid email", () => {
-        expect(validEmail.getValue()).to.includes("@");
+    describe("Positive scenarios", () => {
+      it("Should create a valid email", () => {
+        const email = validEmail().getValue();
+
+        expect(email).to.include("@");
       });
     });
 
-    describe("Negative Scenarios", () => {
-      it("should return a error when email is empty", () => {
-        expect(emptyEmail).to.throw(Error, "Email is required");
+    describe("Negative scenarios", () => {
+      it("Should return an error when email is empty", () => {
+        expect(() => validEmail("")).to.throw(Error, "Email is required");
       });
-      it("should return a error when email does not contain '@'", () => {
-        expect(emailWithoutAt).to.throw(Error, "Invalid Email");
+
+      it("Should return an error when email does not contain '@'", () => {
+        expect(() => validEmail(factoryEmail().replace("@", ""))).to.throw(
+          Error,
+          "Invalid Email",
+        );
       });
-      it("should return a error when email format is invalid", () => {
-        expect(invalidEmail).to.throw(Error, "Invalid Email");
+
+      it("Should return an error when email format is invalid", () => {
+        expect(() => validEmail("not-an-email")).to.throw(
+          Error,
+          "Invalid Email",
+        );
       });
     });
   });
 
   describe("Validations", () => {
     describe("Positive scenarios", () => {
-      it("Email Should be a string", () => {
-        expect(validEmail.getValue()).to.be.an("string");
+      it("Email should return a string", () => {
+        expect(validEmail().getValue()).to.be.a("string");
+      });
+
+      it("Should create a valid Email Value Object", () => {
+        expect(validEmail()).to.be.instanceOf(Email);
       });
     });
 
     describe("Negative scenarios", () => {
-      it("Should return a error when email type is not string", () => {
-        expect(emailIvalidType).to.throw(Error, "Email must be string");
+      it("Should return an error when email type is not string", () => {
+        expect(() => validEmail(123 as any)).to.throw(
+          Error,
+          "Email must be string",
+        );
       });
     });
   });
