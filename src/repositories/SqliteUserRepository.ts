@@ -1,7 +1,8 @@
 import { User } from "../domain/entities/user";
+import { Name } from "../domain/value-objects/Name";
 import { Email } from "../domain/value-objects/Email";
 import { Password } from "../domain/value-objects/Password";
-import type { IUserRepository } from "../domain/repositories/IuserRepository";
+import type { IUserRepository } from "../domain/value-objects/repositories/IuserRepository";
 import { db } from "../infra/repositories/database";
 
 export class SqliteUserRepository implements IUserRepository {
@@ -19,7 +20,7 @@ export class SqliteUserRepository implements IUserRepository {
 
     return new User(
       user.id,
-      user.name,
+      new Name(user.name),
       new Email(user.email),
       new Password(user.password),
       new Date(user.created_at),
@@ -40,7 +41,7 @@ export class SqliteUserRepository implements IUserRepository {
   `,
     ).run(
       user._id,
-      user._name,
+      user._name.getValue(),
       user._email.getValue(),
       user._password.getValue(),
       user._createdAt.toISOString(),
@@ -50,7 +51,7 @@ export class SqliteUserRepository implements IUserRepository {
   async update(id: string, userData: User): Promise<void> {
     db.query(`UPDATE Users set name=?, email=?, password=?, created_at=?`).run(
       id,
-      userData._name,
+      userData._name.getValue(),
       userData._email.getValue(),
       userData._password.getValue(),
       userData._createdAt.toISOString(),
