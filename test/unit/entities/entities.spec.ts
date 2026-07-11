@@ -5,15 +5,48 @@ import { User } from "../../../src/domain/entities/user.ts";
 import { newUser } from "../../factories/factory-Entities/factoryEntities.ts";
 import { Email } from "../../../src/domain/value-objects/Email.ts";
 import { Password } from "../../../src/domain/value-objects/Password.ts";
+import { UserFactoryDTO } from "../../dtos/user.factory.dto.ts";
 
 describe("Entities", () => {
   const validUser = newUser();
 
+  const properties: (keyof UserFactoryDTO)[] = [
+    "id",
+    "name",
+    "email",
+    "password",
+    "createdAt",
+  ];
+
   describe("Business Rules", () => {
     describe("Positive scenarios", () => {
-      it("Should create a valid user", () => {});
+      it("Should create a valid user", () => {
+        expect(validUser).to.be.an("object");
+        for (const property of properties) {
+          expect(validUser).to.have.property(property);
+        }
+      });
     });
-    describe("Negative scenarios", () => {});
+
+    describe("Negative scenarios", () => {
+      it("Should throw an error when name is empty", () => {
+        expect(() => newUser({ name: "" })).to.throw(Error, "Name is required");
+      });
+
+      it("Should throw an error when email is empty", () => {
+        expect(() => newUser({ email: "" })).to.throw(
+          Error,
+          "Email is required",
+        );
+      });
+
+      it("Should throw an error when password is empty", () => {
+        expect(() => newUser({ password: "" })).to.throw(
+          Error,
+          "Password is required",
+        );
+      });
+    });
   });
 
   describe("Validations", () => {
