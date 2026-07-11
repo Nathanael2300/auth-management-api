@@ -1,10 +1,11 @@
 import { Email } from "../value-objects/Email";
 import { Password } from "../value-objects/Password";
+import { Name } from "../value-objects/Name";
 
 export class User {
   constructor(
     public readonly id: string,
-    public name: string,
+    public name: Name,
     public email: Email,
     public password: Password,
     public readonly createdAt: Date,
@@ -14,7 +15,7 @@ export class User {
     return this.id;
   }
 
-  get _name(): string {
+  get _name(): Name {
     return this.name;
   }
 
